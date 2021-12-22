@@ -78,10 +78,11 @@ fn init_grammar(
 
 pub fn generate_example(
     input_data: InputData,
+    rng: &mut StdRng,
     start_rule: String,
     config: &GeneratorConfig,
 ) -> Result<String, String> {
-    let mut rng = thread_rng();
+    //let mut rng = thread_rng();
 
     // let config = GeneratorConfig {
     //     expand_limit: expand_limit,
@@ -90,14 +91,14 @@ pub fn generate_example(
     //     ..Default::default()
     // };
 
-    let result = traverse(input_data, &start_rule, &mut rng, config);
+    let result = traverse(input_data, &start_rule, rng, config);
     result
 }
 
 pub fn traverse(
     input_data: InputData,
     start_rule: &String,
-    rng: &mut ThreadRng,
+    rng: &mut StdRng,
     config: &GeneratorConfig,
 ) -> Result<String, String> {
     // Factor de convergencia
@@ -145,7 +146,7 @@ pub fn traverse(
 // depth level es una variable auxiliar para apoyar y detener la profundidad de la recursión
 fn processing_terms(
     input_data: &InputData,
-    rng: &mut ThreadRng,
+    rng: &mut StdRng,
     config: &GeneratorConfig,
     depth_level: usize,
     processing_stack: Vec<(Context, Option<Rc<AstRule>>, Rc<AstRule>, Rc<Expr>)>,
@@ -168,7 +169,7 @@ fn processing_terms(
 /// el resultado en String, los nodos procesados por la función, y los identificadores expandidos (reglas)
 fn processing_stack_fn(
     input_data: &InputData,
-    mut rng: &mut ThreadRng,
+    mut rng: &mut StdRng,
     config: &GeneratorConfig,
     depth_level: usize,
     mut processing_stack: Vec<(Context, Option<Rc<AstRule>>, Rc<AstRule>, Rc<Expr>)>,
@@ -852,7 +853,7 @@ fn processing_stack_fn(
 }
 
 /// Random entre Simbolos |
-pub fn random_definition(definitions: &Vec<Expr>, rng: &mut ThreadRng) -> Result<Expr, String> {
+pub fn random_definition(definitions: &Vec<Expr>, rng: &mut StdRng) -> Result<Expr, String> {
     // println!("Selección aleatoria: {:?}", &definitions);
     match definitions.choose(rng) {
         Some(selected) => {
@@ -864,7 +865,7 @@ pub fn random_definition(definitions: &Vec<Expr>, rng: &mut ThreadRng) -> Result
 }
 
 fn auxiliar_function(
-    rng: &mut ThreadRng,
+    rng: &mut StdRng,
     choice_count: &mut i32,
     selected_choice: &mut Rc<Expr>,
     continue_processing_choice: &mut bool,

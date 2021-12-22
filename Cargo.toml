@@ -28,6 +28,7 @@ bench = false
 
 # Random stuff
 rand = "0.8"
+rand_pcg = "0.2.1"
 
 # Meta crate of pest for access to grammar rules and their AST
 pest_meta = "2.1"

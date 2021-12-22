@@ -25,6 +25,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use std::sync::{Arc, Mutex};
+use rand::prelude::*;
 
 pub mod config;
 mod generator;
@@ -200,6 +201,7 @@ pub fn compile_grammar(grammar: String) -> Result<Grammar, Vec<HashMap<String, S
 pub fn generate_examples(
     grammar_string: String,
     quantity: u32,
+    seed: u64,
     start: String,
     generator_config: &GeneratorConfig,
     executor_config: &ExecutorConfig,
@@ -209,6 +211,7 @@ pub fn generate_examples(
         return parallel_generate_examples(
             input_data,
             quantity,
+            seed,
             start,
             generator_config,
             executor_config,
@@ -217,6 +220,7 @@ pub fn generate_examples(
         return sequential_generate_examples(
             input_data,
             quantity,
+            seed,
             start,
             generator_config,
             executor_config,
@@ -227,6 +231,7 @@ pub fn generate_examples(
 fn parallel_generate_examples(
     input_grammar: InputData,
     quantity: u32,
+    seed: u64,
     start: String,
     generator_config: &GeneratorConfig,
     executor_config: &ExecutorConfig,
@@ -248,8 +253,11 @@ fn parallel_generate_examples(
         progress_bar.tick();
     }
 
+    
+
     (1..quantity + 1).into_par_iter().for_each(|i| {
-        let r = generator::generate_example(input_grammar.clone(), start.clone(), generator_config);
+        let mut rng = StdRng::seed_from_u64(seed);
+        let r = generator::generate_example(input_grammar.clone(), &mut rng, start.clone(), generator_config);
         if executor_config.print_progress_bar {
             progress_bar.inc(1);
         }
@@ -291,6 +299,7 @@ fn parallel_generate_examples(
 fn sequential_generate_examples(
     input_grammar: InputData,
     quantity: u32,
+    seed: u64,
     start: String,
     generator_config: &GeneratorConfig,
     executor_config: &ExecutorConfig,
@@ -312,9 +321,11 @@ fn sequential_generate_examples(
         progress_bar.tick();
     }
 
+    let mut rng = StdRng::seed_from_u64(seed);
+
     for i in 1..quantity + 1 {
         // Generate example
-        let r = generator::generate_example(input_grammar.clone(), start.clone(), generator_config);
+        let r = generator::generate_example(input_grammar.clone(), &mut rng, start.clone(), generator_config);
         if executor_config.print_progress_bar {
             progress_bar.inc(1);
         }

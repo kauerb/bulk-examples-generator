@@ -38,7 +38,7 @@ impl Default for ExecutorConfig {
     fn default() -> Self {
         ExecutorConfig {
             benchmark_mode: false,
-            parallel_mode: true,
+            parallel_mode: false,
             print_progress_bar: false,
             print_progress_text: false,
             print_debug: false,
